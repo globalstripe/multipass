@@ -1,0 +1,10 @@
+#multipass launch --name microk8s-vm --memory 3G
+#multipass exec microk8s-vm -- sudo snap install microk8s --classic
+multipass exec microk8s-vm -- sudo iptables -P FORWARD ACCEPT
+
+multipass shell microk8s-vm
+
+# In the shell run this - exit and re-enter to avoid having to sudo everything
+# sudo usermod -aG microk8s ubuntu
+
+

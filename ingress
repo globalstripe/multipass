@@ -1,0 +1,273 @@
+https://phoenixnap.com/kb/microk8s-ingress
+
+
+microk8s enable ingress
+
+kubectl get pods -A | grep ingress
+
+ingress        nginx-ingress-microk8s-controller-dp9gz   1/1     Running   0          10m
+ingress        nginx-ingress-microk8s-controller-zv9rd   1/1     Running   0          10m
+
+ubuntu@master:~$ curl -v 127.0.0.1
+*   Trying 127.0.0.1:80...
+* Connected to 127.0.0.1 (127.0.0.1) port 80
+> GET / HTTP/1.1
+> Host: 127.0.0.1
+> User-Agent: curl/8.5.0
+> Accept: */*
+>
+< HTTP/1.1 404 Not Found
+< Date: Sun, 26 May 2024 22:55:45 GMT
+< Content-Type: text/html
+< Content-Length: 146
+< Connection: keep-alive
+<
+
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+
+* Connection #0 to host 127.0.0.1 left intact
+ubuntu@master:~$
+ubuntu@master:~$
+ubuntu@master:~$ microk8s kubectl -n ingress get configmap
+
+ubuntu@master:~$ microk8s kubectl -n ingress get configmap
+NAME                                DATA   AGE
+kube-root-ca.crt                    1      11m
+nginx-ingress-tcp-microk8s-conf     0      11m
+nginx-ingress-udp-microk8s-conf     0      11m
+nginx-load-balancer-microk8s-conf   0      11m
+
+nginx-ingress-microk8s-controller-dp9gz
+
+Port Worward
+
+microk8s kubectl port-forward svc/demo -n test 8080:80
+
+===
+ubuntu@master:~$ cat hello-world.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+  labels:
+    app: hello-world
+spec:
+  selector:
+    matchLabels:
+      app: hello-world
+  replicas: 2
+
+  ===
+
+
+  ===
+
+ubuntu@master:~$ cat ingress.yml
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+  annotations:
+    kubernetes.io/ingress.class: public
+    cert-manager.io/cluster-issuer: letsencrypt-microk8s
+  labels:
+    app: my-app
+spec:
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: example.com
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - example.com
+      secretName: tls-example
+===
+
+
+
+ubuntu@master:~$ cat test-ingress.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello-world
+            port:
+              number: 80
+ubuntu@master:~$
+
+
+ubuntu@master:~$ cat hello-world.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+  labels:
+    app: hello-world
+spec:
+  selector:
+    matchLabels:
+      app: hello-world
+  replicas: 2
+
+  ubuntu@master:~$ cat letsencrypt-microk8s.yml
+---
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-microk8s
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: chris.clark@globalstripe.com
+    privateKeySecretRef:
+      name: letsencrypt-microk8s
+    solvers:
+      - http01:
+          ingress:
+            class: public
+ubuntu@master:~$
+
+
+history
+
+15  kubectl get svc -n ingress
+16  microk8s enable ingress metallb:10.64.140.43-10.64.140.49
+17  kubectl get svc -n ingress
+18  microk8s kubectl port-forward svc/demo -n test 8080:80
+19  microk8s kubectl create ns test
+20  microk8s kubectl port-forward svc/demo -n test 8080:80
+21  microk8s kubectl create deployment demo --image=httpd --port=80 -n test
+22  microk8s kubectl expose deployment demo -n test
+23  microk8s kubectl port-forward svc/demo -n test 8080:80
+24  ls -las
+25  cat hello-world.yml
+26  cat ingress.yml
+27  ls -las
+28  cat test-ingress.yaml
+29  ls
+30  cat hello-world.yml
+31  ls
+32  cat letsencrypt-microk8s.yml
+33  history
+
+
+sudo usermod -aG microk8s ubuntu
+exit
+microk8s add node
+microk8s add-node
+microk8s status
+microk8s enable hostpath-storage
+microk8s status
+microk8s.kubectl get nodes
+microk8s enable cert-manager ingress dns
+microk8s status
+vi letsencrypt-microk8s.yml
+alias kubectl='microk8s kubectl'
+kubectl apply -f letsencrypt-microk8s.yml
+vi ingress.yml
+kubectl apply -f ingress.yml
+vi ingress.yml
+kubectl get nodes
+microk8s kubectl get pods -A | grep ingress
+curl -v 127.0.0.1
+microk8s kubectl -n ingress get configmap
+microk8s enable ingress
+microk8s kubectl -n ingress get configmap
+microk8s kubectl -n ingress edit configmaps nginx-load-balancer-microk8s-conf
+microk8s kubectl -n ingress logs [pod-name] | grep reload
+microk8s kubectl get pods -A | grep ingress
+microk8s kubectl -n ingress logs nginx-ingress-microk8s-controller-dp9gz | grep reload
+nano test-ingress.yaml
+ls
+microk8s kubectl apply -f test-ingress.yaml
+vi test-ingress.yaml
+microk8s kubectl apply -f test-ingress.yaml
+curl -v 127.0.0.1
+kubectl get pods
+kubectl get pods --all-namespaces
+kubectl -n ingress get configmap
+kubectl --all-namespaces get pods
+kubectl get pods --all-namespaces
+kubectl logs nginx-ingress-microk8s-controller-dp9gz
+kubectl logs -f pod/nginx-ingress-microk8s-controller-dp9gz
+kubectl get pods --all-namespaces
+kubectl logs -f pod/nginx-ingress-microk8s-controller-dp9gz -n ingress
+microk8s kubectl -n ingress edit configmaps nginx-load-balancer-microk8s-conf
+microk8s kubectl -n ingress logs nginx-ingress-microk8s-controller-dp9gz | grep reload
+curl -v 127.0.0.1
+vi ingress.yml
+vi test-ingress.yaml
+vi hello-world.yml
+git clone https://github.com/skynet86/hello-world-k8s.git
+ls
+cd hello-world-k8s/
+ls
+cat hello-world.yaml
+kubectl create -f hello-world.yaml
+kubectl get pods --all-namespaces
+curl -v 127.0.0.1
+ls
+vi hello-world.yaml
+kubectl get pods --all-namespaces
+kubectl logs -f pod/nginx-ingress-microk8s-controller-dp9gz
+kubectl logs -f pod/nginx-ingress-microk8s-controller-dp9gz -n ingress
+ls
+cat README.md
+kubectl get all
+exit
+curl http;//127.0.0.1
+curl -V http://127.0.0.1
+curl -v http://127.0.0.1
+kubectl get svc -n ingress
+curl -v http://localhost:8080
+microk8s kubectl get ingressclass
+cat <<EOF | microk8s kubectl create -f -
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-ingress
+  namespace: test
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  ingressClassName: public
+  rules:
+    - http:
+        paths:
+        - path: /demo
+          pathType: Exact
+          backend:
+            service:
+              name: demo
+              port:
+                number: 80
+EOF
+
+microk8s kubectl get ingressclass
+microk8s kubectl get ingress -n test
+exit
+
+
