@@ -1,0 +1,10 @@
+multipass transfer master:pods/apple.yaml pods/apple.yaml
+multipass transfer master:pods/banana.yaml pods/banana.yaml
+multipass transfer master:pods/apple-banana-ingress.yaml pods/apple-banana-ingress.yaml
+multipass transfer master:pods/create-apps.sh pods/create-apps.sh
+
+
+multipass transfer pods/apple.yaml master:pods/apple.yaml
+multipass transfer pods/banana.yaml master:pods/banana.yaml
+multipass transfer pods/apple-banana-ingress.yaml master:pods/apple-banana-ingress.yaml
+multipass transfer pods/create-apps.sh master:pods/create-apps.sh
